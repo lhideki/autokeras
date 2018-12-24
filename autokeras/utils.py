@@ -4,6 +4,7 @@ import pickle
 import sys
 import tempfile
 import zipfile
+import logging
 
 import warnings
 import imageio
@@ -47,12 +48,11 @@ def pickle_to_file(obj, path):
     """Save the pickle file to the specified path."""
     pickle.dump(obj, open(path, 'wb'))
 
+
 # TODO cannot detect nvidia-smi in Windows normally. We need a fall back for windows
 def get_device():
     """ If CUDA is available, use CUDA device, else use CPU device.
-
     When choosing from CUDA devices, this function will choose the one with max memory available.
-
     Returns: string device name.
     """
     # TODO: could use gputil in the future
@@ -137,21 +137,21 @@ def download_file_with_extract(file_link, file_path, extract_path):
 def verbose_print(new_father_id, new_graph, new_model_id):
     """Print information about the operation performed on father model to obtain current model and father's id."""
     cell_size = [24, 49]
-    print('New Model Id', new_model_id)
+
+    logging.info('New Model Id - ' + str(new_model_id))
     header = ['Father Model ID', 'Added Operation']
     line = '|'.join(str(x).center(cell_size[i]) for i, x in enumerate(header))
-    print('\n' + '+' + '-' * len(line) + '+')
-    print('|' + line + '|')
-    print('+' + '-' * len(line) + '+')
+    logging.info('\n' + '+' + '-' * len(line) + '+')
+    logging.info('|' + line + '|')
+    logging.info('+' + '-' * len(line) + '+')
     for i in range(len(new_graph.operation_history)):
         if i == len(new_graph.operation_history) // 2:
-            r = [new_father_id, ' '.join(str(item) for item in new_graph.operation_history[i])]
+            r = [str(new_father_id), ' '.join(str(item) for item in new_graph.operation_history[i])]
         else:
             r = [' ', ' '.join(str(item) for item in new_graph.operation_history[i])]
         line = '|'.join(str(x).center(cell_size[i]) for i, x in enumerate(r))
-        print('|' + line + '|')
-    print('+' + '-' * len(line) + '+')
-
+        logging.info('|' + line + '|')
+    logging.info('+' + '-' * len(line) + '+')
 
 
 def validate_xy(x_train, y_train):
@@ -263,4 +263,5 @@ def get_system():
         return Constant.SYS_LINUX
     if os.name == 'nt':
         return Constant.SYS_WINDOWS
+
     raise EnvironmentError('Unsupported environment')
