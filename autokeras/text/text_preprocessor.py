@@ -79,7 +79,7 @@ def read_embedding_index(extract_path):
         embedding_index: Dictionary contains word with pre trained index.
     """
     embedding_index = {}
-    f = open(os.path.join(extract_path, Constant.PRE_TRAIN_FILE_NAME))
+    f = open(os.path.join(extract_path, Constant.PRE_TRAIN_FILE_NAME), encoding='utf-8')
     for line in f:
         values = line.split()
         word = values[0]
